@@ -2,7 +2,24 @@ const express = require('express');
 const app = express();
 const homeController = require('./controllers/homeController');
 const errorController = require('./controllers/errorController');
-const layouts =  require('express-ejs-layouts');
+const layouts = require('express-ejs-layouts');
+const MongoDB = require('mongodb').MongoClient;
+const dbURL = 'mongodb://localhost:27017'
+const dbName = 'recipe_db';
+
+// Practice to see our connection to MongoDB working
+MongoDB.connect(dbURL, (error, client) => {
+  if (error) {
+    throw error;
+  };
+  let db = client.db(dbName);
+  db.collection('contacts').find().toArray((error, data) => {
+    if (error) {
+      throw error;
+    }
+    console.log(data);
+  });
+});
 
 
 app.set('port', process.env.PORT || 3000);
@@ -18,7 +35,7 @@ app.use(layouts); // Set the app to use the layout
  */
 app.use(express.urlencoded({ extended: false }));
 
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
   res.send("Welcome to this food website");
 });
 
