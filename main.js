@@ -3,22 +3,46 @@ const app = express();
 const homeController = require('./controllers/homeController');
 const errorController = require('./controllers/errorController');
 const layouts = require('express-ejs-layouts');
-const MongoDB = require('mongodb').MongoClient;
-const dbURL = 'mongodb://localhost:27017'
-const dbName = 'recipe_db';
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true });
+const db = mongoose.connection;
 
-// Practice to see our connection to MongoDB working
-MongoDB.connect(dbURL, (error, client) => {
-  if (error) {
-    throw error;
-  };
-  let db = client.db(dbName);
-  db.collection('contacts').find().toArray((error, data) => {
-    if (error) {
-      throw error;
-    }
-    console.log(data);
-  });
+db.once("open", () => {
+  console.log('Successfully connected to MongoDB using Mongoose');
+});
+
+// Define the Subscriber schema
+const subscriberSchema = mongoose.Schema({
+  name: String,
+  email: String,
+  zipCode: Number
+});
+
+// The model that can be used to create new Subscribers
+const Subscriber = mongoose.model('Subscriber', subscriberSchema);
+
+// Creating a new subscriber example
+let subscriber1 = new Subscriber({
+  name: 'New Subscriber',
+  email: 'subscriber@subscriber.sUbScriBe'
+});
+
+// Saving a subscriber to the database
+subscriber1.save((err, savedDocument) => {
+  if (err) {
+    console.log(err);
+  }
+  console.log(savedDocument)
+});
+
+Subscriber.create({
+  name: "Another Subscriber, but done in one step",
+  email: "icantthinkofanyfunnamesrightnow@gmail.com"
+}, (err, savedDocument) => {
+  if (err) {
+    console.log(err);
+  }
+  console.log(savedDocument)
 });
 
 
