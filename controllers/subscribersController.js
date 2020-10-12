@@ -1,13 +1,24 @@
 const Subscriber = require('../models/subscriber');
 
 exports.getAllSubscribers = (req, res, next) => {
-  Subscriber.find({}, (error, subscribers) => {
-    if (error) {
-      next(error); // Pass an error to the next middleware function
-    }
-    req.data = subscribers;
-    next(); // Continues to next middleware function
-  })
+  Subscriber.find({})
+    .exec()
+    .then((subs) => {
+      res.render("subscribers", {
+        subscribers: subs
+      });
+    })
+    .catch((error) => {
+      console.log(error.message);
+      return[];
+    })
+    .then(() => {
+      console.log("Promise complete");
+    });
+}
+
+exports.getSubscriptionPage = (req, res) => {
+  res.render("contact");
 }
 
 exports.saveSubscriber = (req,res) => {
