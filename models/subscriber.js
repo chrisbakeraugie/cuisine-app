@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 // Define the Subscriber schema
 const subscriberSchema = mongoose.Schema({
   name: String,
-  email: String,
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    lowercase: true
+  },
   zipCode: Number
 });
 
