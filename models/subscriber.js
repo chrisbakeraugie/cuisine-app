@@ -19,8 +19,6 @@ const subscriberSchema = mongoose.Schema({
   }
 });
 
-// The model that can be used to create new Subscribers
-const Subscriber = mongoose.model('Subscriber', subscriberSchema);
 
 subscriberSchema.methods.getInfo = function() {
   return (`Name: ${this.name} Email: ${this.email} Zip Code: ${this.zipCode}`);
@@ -29,5 +27,10 @@ subscriberSchema.methods.getInfo = function() {
 subscriberSchema.methods.findLocalSubscribers = function() {
   return this.model("Subscriber").find({zipCode: this.zipCode}).exec();
 };
+
+// The model that can be used to create new Subscribers
+const Subscriber = mongoose.model('Subscriber', subscriberSchema);
+
+
 
 module.exports = mongoose.model('Subscriber', subscriberSchema);
