@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     first: {
       type: String,
@@ -30,9 +30,9 @@ const userSchema = mongoose.Schema({
     required: true
   },
 
-  courses: [{ type: Schema.Types.ObjectId, ref: "Course" }],
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
 
-  subscribedAccount: { type: Schema.Types.ObjectId, ref: "Subscriber" }
+  subscribedAccount: { type: mongoose.Schema.Types.ObjectId, ref: "Subscriber" }
 },
   { timestamps: true } // Timestamp property to record createdAt and updatedAt dates
 );
@@ -43,4 +43,4 @@ userSchema.virtual("fullName").get(function () {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = User;

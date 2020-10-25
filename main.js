@@ -6,7 +6,6 @@ const layouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true });
 const db = mongoose.connection;
-const Subscriber = require('./models/subscriber');
 const subscriberController = require('./controllers/subscribersController');
 
 
