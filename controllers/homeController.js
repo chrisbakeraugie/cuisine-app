@@ -14,15 +14,38 @@ var courses = [
   }
 ];
 
+/*
+  These exports have been refactored below to make the file more readable
+*/
+// exports.showCourses = (req, res) => {
+//   res.render('courses', {
+//     offeredCourses: courses
+//   });
+// }
+// exports.showSignUp = (req,res) => {
+//   res.render('contact');
+// }
+// exports.postedSignUpForm = (req,res) => {
+//   res.render('thanks');
+// }
+
 // !!! Express.js will find the views you are referencing in the render statement
-exports.showCourses = (req, res) => {
-  res.render('courses', {
-    offeredCourses: courses
-  });
-}
-exports.showSignUp = (req,res) => {
-  res.render('contact');
-}
-exports.postedSignUpForm = (req,res) => {
-  res.render('thanks');
+
+module.exports = {
+  showCourses: (req, res) => {
+    res.render('courses', {
+      offeredCourses: courses
+    });
+  },
+
+  showSignUp: (req,res) => {
+    res.render('contact');
+  },
+
+  postedSignUpForm = (req,res) => {
+    res.render('thanks');
+  }
+
+
+
 }
