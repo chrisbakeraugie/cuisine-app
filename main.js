@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true });
 const db = mongoose.connection;
 const subscriberController = require('./controllers/subscribersController');
+const usersController = require('./controllers/usersController');
 
 
 db.once("open", () => {
@@ -36,6 +37,7 @@ app.get('/contact', homeController.showSignUp);
 app.post('/contact', homeController.postedSignUpForm);
 app.get('/subscribers', subscriberController.getAllSubscribers);
 app.post('/subscribe', subscriberController.saveSubscriber);
+app.get('/users', usersController.index);
 
 // Errors need to be last routes - act as a catch all for your website
 app.use(errorController.pageNotFoundError);

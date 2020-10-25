@@ -42,7 +42,7 @@ module.exports = {
     res.render('contact');
   },
 
-  postedSignUpForm = (req,res) => {
+  postedSignUpForm: (req,res) => {
     res.render('thanks');
   }
 
