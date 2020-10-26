@@ -21,7 +21,7 @@ const httpStatus = require('http-status-codes');
 module.exports = {
   internalServerError: (error, req, res, next) => {
     let errorCode = httpStatus.INTERNAL_SERVER_ERROR;
-    console.log(`ERROR occured: ${error.stack}`);
+    console.log(`ERROR occurred: ${error.stack}`);
     res.status(errorCode);
     res.send(`${errorCode} | Technical issues: Application thingy broken.`);
   },

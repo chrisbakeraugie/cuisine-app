@@ -37,7 +37,10 @@ app.get('/contact', homeController.showSignUp);
 app.post('/contact', homeController.postedSignUpForm);
 app.get('/subscribers', subscriberController.getAllSubscribers);
 app.post('/subscribe', subscriberController.saveSubscriber);
-app.get('/users', usersController.index);
+
+// For /users, I separated the index and indexView. This means the query and the view are separate
+// int the app.get(), I used two controllers instead of one and used the next() method in the exports object
+app.get('/users', usersController.index, usersController.indexView);
 
 // Errors need to be last routes - act as a catch all for your website
 app.use(errorController.pageNotFoundError);
