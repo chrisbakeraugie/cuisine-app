@@ -8,6 +8,7 @@ mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true 
 const db = mongoose.connection;
 const subscriberController = require('./controllers/subscribersController');
 const usersController = require('./controllers/usersController');
+const router = express.Router();
 
 
 db.once("open", () => {
@@ -38,9 +39,12 @@ app.post('/contact', homeController.postedSignUpForm);
 app.get('/subscribers', subscriberController.getAllSubscribers);
 app.post('/subscribe', subscriberController.saveSubscriber);
 
+
 // For /users, I separated the index and indexView. This means the query and the view are separate
 // int the app.get(), I used two controllers instead of one and used the next() method in the exports object
 app.get('/users', usersController.index, usersController.indexView);
+app.get('/users/new', usersController.new);
+app.post('/users/create', usersController.create, usersController.redirectView);
 
 // Errors need to be last routes - act as a catch all for your website
 app.use(errorController.pageNotFoundError);
