@@ -28,23 +28,24 @@ app.use(layouts); // Set the app to use the layout
  * or "qs" library (true)
  */
 app.use(express.urlencoded({ extended: false }));
+app.use('/', router);
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.send("Welcome to this food website");
 });
 
-app.get('/courses', homeController.showCourses);
-app.get('/contact', homeController.showSignUp);
-app.post('/contact', homeController.postedSignUpForm);
-app.get('/subscribers', subscriberController.getAllSubscribers);
-app.post('/subscribe', subscriberController.saveSubscriber);
+router.get('/courses', homeController.showCourses);
+router.get('/contact', homeController.showSignUp);
+router.post('/contact', homeController.postedSignUpForm);
+router.get('/subscribers', subscriberController.getAllSubscribers);
+router.post('/subscribe', subscriberController.saveSubscriber);
 
 
 // For /users, I separated the index and indexView. This means the query and the view are separate
 // int the app.get(), I used two controllers instead of one and used the next() method in the exports object
-app.get('/users', usersController.index, usersController.indexView);
-app.get('/users/new', usersController.new);
-app.post('/users/create', usersController.create, usersController.redirectView);
+router.get('/users', usersController.index, usersController.indexView);
+router.get('/users/new', usersController.new);
+router.post('/users/create', usersController.create, usersController.redirectView);
 
 // Errors need to be last routes - act as a catch all for your website
 app.use(errorController.pageNotFoundError);
