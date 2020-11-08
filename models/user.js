@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
     last: {
       type: String,
       trim: true
+    },
+    middle: {
+      type: String,
+      trim: true
     }
   },
 
@@ -41,6 +45,13 @@ userSchema.virtual("fullName").get(function () {
   return (`${this.name.first} ${this.name.last}`)
 });
 
+userSchema.virtual("middleName").get(function() {
+  if (this.name.middle){
+    return("Yes");
+  } else {
+    return("No");
+  }
+})
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
