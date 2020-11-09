@@ -53,5 +53,20 @@ module.exports = {
     } else {
       next();
     }
+  },
+
+  show: (req, res, next) => {
+    let userID = req.params.id;
+    User.findById(userID).then(user => {
+      res.locals.user = user;
+      next();
+    }).catch(error => {
+      console.log(`Error retching user by ID: ${error.message}`);
+      next(error);
+    });
+  },
+
+  showView: (req, res) => {
+    res.render("users/show");
   }
 }

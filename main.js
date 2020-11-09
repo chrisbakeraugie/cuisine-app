@@ -46,6 +46,7 @@ router.post('/subscribe', subscriberController.saveSubscriber);
 router.get('/users', usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
 router.post('/users/create', usersController.create, usersController.redirectView);
+router.get('/users/:id', usersController.show, usersController.showView);
 
 // Errors need to be last routes - act as a catch all for your website
 app.use(errorController.pageNotFoundError);

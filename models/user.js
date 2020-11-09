@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Subscriber = require('./subscriber');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -50,6 +51,26 @@ userSchema.virtual("middleName").get(function() {
     return("Yes");
   } else {
     return("No");
+  }
+});
+
+/**
+ * This "pre save hook" checks to see if the user already has an associated subscriber,
+ * and stops the save operation if it does.
+ */
+userSchema.pre("save", function (next) {
+  let user = this;
+  if (user.subscribedAccount === undefined) {
+    Subscriber.findOne({
+      email: user.email
+    }).then(subscriber => {
+      user.subscribedAccount = subscriber;
+      next();
+    }).catch(error => {
+      console.log(`Error in connecting subscriber: ${error}`);
+    });
+  } else {
+    next(); 
   }
 })
 const User = mongoose.model('User', userSchema);
