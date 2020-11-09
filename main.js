@@ -10,6 +10,14 @@ const subscriberController = require('./controllers/subscribersController');
 const usersController = require('./controllers/usersController');
 const router = express.Router();
 
+/**
+ * method-override package because HTML forms only support
+ * GET and POST requests. This package will let Express interpret
+ * POST requests as PUT requests, for example
+ */
+const methodOverride = require("method-override");
+
+
 
 db.once("open", () => {
   console.log('Successfully connected to MongoDB using Mongoose');
@@ -34,6 +42,10 @@ router.get('/', (req, res) => {
   res.send("Welcome to this food website");
 });
 
+router.use(methodOverride("_method", {
+  methods: ["POST", "GET"]
+}));
+
 router.get('/courses', homeController.showCourses);
 router.get('/contact', homeController.showSignUp);
 router.post('/contact', homeController.postedSignUpForm);
@@ -47,6 +59,8 @@ router.get('/users', usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
 router.post('/users/create', usersController.create, usersController.redirectView);
 router.get('/users/:id', usersController.show, usersController.showView);
+router.get('/users/:id/edit', usersController.edit);
+router.put('/users/:id/update', usersController.update, usersController.redirectView);
 
 // Errors need to be last routes - act as a catch all for your website
 app.use(errorController.pageNotFoundError);

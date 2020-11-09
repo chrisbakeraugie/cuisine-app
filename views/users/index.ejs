@@ -20,6 +20,7 @@
           <%= user.fullName %>
         </a>
       </td>
+      <td><a href="<%= `/users/${user._id}/edit`%>">Edit</a></td>
     </tr>
     <%})%>
   </tbody>
