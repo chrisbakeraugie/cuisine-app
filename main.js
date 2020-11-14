@@ -59,7 +59,7 @@ router.use((req, res, next) => { // assign flash messages to the local flashMess
 });
 
 router.get('/', (req, res) => {
-  res.send("Welcome to this food website");
+  res.render("home");
 });
 
 router.use(methodOverride("_method", {
@@ -77,6 +77,10 @@ router.post('/subscribe', subscriberController.saveSubscriber);
 router.get('/users', usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
 router.post('/users/create', usersController.create, usersController.redirectView);
+
+router.get('/users/login', usersController.login);
+router.post('/users/login', usersController.authenticate, usersController.redirectView);
+
 router.get('/users/:id', usersController.show, usersController.showView);
 router.get('/users/:id/edit', usersController.edit);
 router.put('/users/:id/update', usersController.update, usersController.redirectView);
