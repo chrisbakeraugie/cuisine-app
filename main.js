@@ -52,7 +52,6 @@ router.post('/contact', homeController.postedSignUpForm);
 router.get('/subscribers', subscriberController.getAllSubscribers);
 router.post('/subscribe', subscriberController.saveSubscriber);
 
-
 // For /users, I separated the index and indexView. This means the query and the view are separate
 // int the app.get(), I used two controllers instead of one and used the next() method in the exports object
 router.get('/users', usersController.index, usersController.indexView);

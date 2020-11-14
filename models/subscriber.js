@@ -19,7 +19,7 @@ const subscriberSchema = new mongoose.Schema({
   },
 
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }] // Referencing the course.js model. The [] are just to represent it will be an array
-});
+}, {timestamps: true});
 
 
 subscriberSchema.methods.getInfo = function () {
