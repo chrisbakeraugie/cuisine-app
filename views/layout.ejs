@@ -4,7 +4,17 @@
 <head>
   <title>Cuisine Website Mock-Up</title>
 </head>
+
 <body>
+  <div class="flashes">
+    <% if (flashMessages) { %>
+      <% if (flashMessages.success) { %>
+        <div class="flash success"><%= flashMessages.success %></div>
+      <% } else if (flashMessages.error) { %>
+        <div class="flash error"> <%= flashMessages.error %></div>
+      <% } %>
+    <% } %>
+  </div>
   <div id="nav">NAVIGATION GOES HERE</div>
   <%- body %>
   <div id="footer">FOOTER GOES HERE</div>

@@ -37,12 +37,19 @@ module.exports = {
     };
 
     User.create(userParams).then((user) => {
+      // Although we are using the request object here to store the flash messages 
+      //temporarily, because we connected these messages to a local variable on the 
+      //response, the messages ultimately make it to the response object
+      req.flash("success", `${user.fullName}'s account created successfully`);
+      // flash messages must be included in your view in order to be displayed properly
       res.locals.redirect = "/users";
       res.locals.user = user;
       next();
     }).catch(error => {
       console.log(`Error saving user: ${error}`);
-      next(error);
+      res.locals.redirect = "/users/new";
+      req.flash("error", `Failed to create user account because: ${error.message}`);
+      next();
     });
   },
 
@@ -108,7 +115,7 @@ module.exports = {
 
   delete: (req, res, next) => {
     let userId = req.params.id;
-    User.findByIdAndDelete(userId).then(()=> {
+    User.findByIdAndDelete(userId).then(() => {
       res.locals.redirect = "/users";
       next();
     }).catch(error => {

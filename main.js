@@ -9,6 +9,11 @@ const db = mongoose.connection;
 const subscriberController = require('./controllers/subscribersController');
 const usersController = require('./controllers/usersController');
 const router = express.Router();
+const expressSession = require('express-session');
+const cookieParser = require('cookie-parser');
+const connectFlash = require('connect-flash');
+
+ 
 
 /**
  * method-override package because HTML forms only support
@@ -37,6 +42,21 @@ app.use(layouts); // Set the app to use the layout
  */
 app.use(express.urlencoded({ extended: false }));
 app.use('/', router);
+
+router.use(cookieParser("secret_passcode")); // configure application to use cookie parser as middleware
+router.use(expressSession({ 
+  secret: "secret_passcode", 
+  cookie: {
+    maxAge: 4000000
+  },
+  resave: false,
+  saveUninitialized: false
+}));
+router.use(connectFlash()); // configure application to use connect flash as middleware
+router.use((req, res, next) => { // assign flash messages to the local flashMessages variable on the response object
+  res.locals.flashMessages = req.flash();
+  next();
+});
 
 router.get('/', (req, res) => {
   res.send("Welcome to this food website");
