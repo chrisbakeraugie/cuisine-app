@@ -5,7 +5,6 @@ module.exports = {
   index: (req, res, next) => {
     User.find()
       .then(users => {
-        console.log("Ran index");
         res.locals.users = users; // This is storing the user data on the response.
         next();
       })
@@ -16,7 +15,6 @@ module.exports = {
   },
 
   indexView: (req, res) => {
-    console.log("ran indexView")
     res.render("users/index");
   },
 
@@ -129,22 +127,29 @@ module.exports = {
   },
 
   authenticate: (req, res, next) => {
-    User.findOne({
-      email: req.body.email
-    }).then(user => {
-      if (user && user.password === req.body.password) {
-        res.locals.redirect = `/users/${user._id}`;
-        req.flash("succes", `${user.fullName}'s logged in successfully`);
-        res.locals.user = user;
-        next();
-      } else {
-        req.flash("error", "Your account or password is incorrect. Please try again or contact your system administrator.");
-        res.locals.redirect = "/users/login";
-        next();
-      }
-    }).catch(error => {
-      console.log("Error logging in user: " + error.message);
-      next(error);
-    })
-  } 
+    User.findOne({ email: req.body.email })
+      .then(user => {
+        if (user) {
+          user.passwordComparison(req.body.password)
+            .then(passwordsMatch => {
+              if (passwordsMatch) {
+                res.locals.redirect = `/users/${user._id}`;
+                req.flash("success", `${user.fullName} logged in successfully`);
+                res.locals.user = user;
+              } else {
+                req.flash("error", "Failed to log in user account: Incorrect Password");
+                res.locals.redirect = `/users/login`;
+              }
+              next();
+            }); 
+        } else {
+          req.flash("error", "Failed to log in user account: User account not found.");
+          res.locals.redirect = "/users/login";
+          next();
+        }
+      }).catch( error => {
+        console.log("Error logging in user: " + error.message);
+        next(error);
+      })
+  }
 }

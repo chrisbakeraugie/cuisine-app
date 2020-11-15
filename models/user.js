@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Subscriber = require('./subscriber');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -72,7 +73,38 @@ userSchema.pre("save", function (next) {
   } else {
     next(); 
   }
-})
+});
+
+/**
+ * Pre save will run whenever a user is saved. on creation or
+ * updated via the  ave method
+ */
+userSchema.pre("save", function(next) {
+  let user = this; // Storing "this" because you lose context in a pre-hook
+  
+  /**
+   * bcrypt takes a password and a number. The "number" represents
+   * the level of complexity of the hash (10 is considered reliable)
+   * 
+   * Then, the hash is accepted as the user password.
+   * Calling next saves the user to the database.
+   * 
+   * Errors are logged
+   */
+  bcrypt.hash(user.password, 10).then(hash => {
+    user.password = hash;
+    next();
+  }).catch(error => {
+    console.log(`Error in hashing password: ${error.message}`);
+    next(error);
+  });
+});
+
+userSchema.methods.passwordComparison = function(inputPassword) {
+  let user = this;
+  return bcrypt.compare(inputPassword, user.password);
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
