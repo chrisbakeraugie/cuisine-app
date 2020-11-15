@@ -127,11 +127,11 @@ module.exports = {
   },
 
   authenticate: (req, res, next) => {
-    User.findOne({ email: req.body.email })
-      .then(user => {
+    User.findOne({ email: req.body.email }) // Find a user by email
+      .then(user => { // If email exists
         if (user) {
-          user.passwordComparison(req.body.password)
-            .then(passwordsMatch => {
+          user.passwordComparison(req.body.password) // Call password comparison on user.js model
+            .then(passwordsMatch => { 
               if (passwordsMatch) {
                 res.locals.redirect = `/users/${user._id}`;
                 req.flash("success", `${user.fullName} logged in successfully`);
@@ -140,7 +140,7 @@ module.exports = {
                 req.flash("error", "Failed to log in user account: Incorrect Password");
                 res.locals.redirect = `/users/login`;
               }
-              next();
+              next(); // Call next middleware function with redirect and flash message set
             }); 
         } else {
           req.flash("error", "Failed to log in user account: User account not found.");

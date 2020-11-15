@@ -91,8 +91,8 @@ userSchema.pre("save", function(next) {
    * 
    * Errors are logged
    */
-  bcrypt.hash(user.password, 10).then(hash => {
-    user.password = hash;
+  bcrypt.hash(user.password, 10).then(hash => { // hashes user password
+    user.password = hash; // Stores hashed password as the user password
     next();
   }).catch(error => {
     console.log(`Error in hashing password: ${error.message}`);
@@ -100,9 +100,13 @@ userSchema.pre("save", function(next) {
   });
 });
 
+/**
+ * This method will be used to compare passwords during authentication
+ * NOTE - Authentification is not a word, which is news to me...
+ */
 userSchema.methods.passwordComparison = function(inputPassword) {
   let user = this;
-  return bcrypt.compare(inputPassword, user.password);
+  return bcrypt.compare(inputPassword, user.password); // Returns whether passwords match
 };
 
 const User = mongoose.model('User', userSchema);
