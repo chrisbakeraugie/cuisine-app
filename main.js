@@ -13,8 +13,11 @@ const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
 const connectFlash = require('connect-flash');
 const expressValidator = require('express-validator'); // Tool to check that data matches a criteria
+const passport = require("passport");
+const User = require("./models/user");// See passport serialization for information
 
- 
+
+
 
 /**
  * method-override package because HTML forms only support
@@ -47,8 +50,8 @@ app.use('/', router);
 router.use(expressValidator());
 
 router.use(cookieParser("secret_passcode")); // configure application to use cookie parser as middleware
-router.use(expressSession({ 
-  secret: "secret_passcode", 
+router.use(expressSession({
+  secret: "secret_passcode",
   cookie: {
     maxAge: 4000000
   },
@@ -60,7 +63,22 @@ router.use((req, res, next) => { // assign flash messages to the local flashMess
   res.locals.flashMessages = req.flash();
   next();
 });
+router.use(passport.initialize()); // initializes passport
+router.use(passport.session()); // Configure passport to use sessions. Any other sessions must be defined before this line
 
+/**
+ * Make sure the User model is imported.
+ * Normally, you'd need to set up some configurations to
+ * create a login strategy for a model, but because you're using
+ * the default local login strategy, you only need
+ * to tell passport to use the strategy created for 
+ * the user model.
+ * The bottom two lines direct the process of encrypting and 
+ * decrypting user data stored in sessions
+ */
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser);
+passport.deserializeUser(User.deserializeUser);
 
 router.get('/', (req, res) => {
   res.render("home");
@@ -80,7 +98,7 @@ router.post('/subscribe', subscriberController.saveSubscriber);
 // int the app.get(), I used two controllers instead of one and used the next() method in the exports object
 router.get('/users', usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
-router.post('/users/create', usersController.validate ,usersController.create, usersController.redirectView);
+router.post('/users/create', usersController.validate, usersController.create, usersController.redirectView);
 
 router.get('/users/login', usersController.login);
 router.post('/users/login', usersController.authenticate, usersController.redirectView);

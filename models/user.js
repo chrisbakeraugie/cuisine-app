@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Subscriber = require('./subscriber');
 const bcrypt = require('bcrypt');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -31,10 +32,11 @@ const userSchema = new mongoose.Schema({
     max: 99950
   },
 
-  password: {
-    type: String,
-    required: true
-  },
+  // Removed on addition of Passport.js, which manages this for us
+  // password: {
+  //   type: String,
+  //   required: true
+  // },
 
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
 
@@ -108,6 +110,21 @@ userSchema.methods.passwordComparison = function(inputPassword) {
   let user = this;
   return bcrypt.compare(inputPassword, user.password); // Returns whether passwords match
 };
+
+/**
+ * Applying the passport-local-mongoose module as 
+ * a plugin to the user schema
+ * 
+ * NOTE
+ * 
+ * When this is functioning, Passport.js automatically takes care of
+ * password storage, so you can remove the password property.
+ * It modifies your schema behind the scenes to add ash and salt fields to your User model
+ * 
+ */
+userSchema.plugin(passportLocalMongoose, {
+  usernameField: "email"
+});
 
 const User = mongoose.model('User', userSchema);
 
