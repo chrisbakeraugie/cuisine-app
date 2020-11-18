@@ -12,6 +12,7 @@ const router = express.Router();
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
 const connectFlash = require('connect-flash');
+const expressValidator = require('express-validator'); // Tool to check that data matches a criteria
 
  
 
@@ -41,7 +42,9 @@ app.use(layouts); // Set the app to use the layout
  * or "qs" library (true)
  */
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use('/', router);
+router.use(expressValidator());
 
 router.use(cookieParser("secret_passcode")); // configure application to use cookie parser as middleware
 router.use(expressSession({ 
@@ -57,6 +60,7 @@ router.use((req, res, next) => { // assign flash messages to the local flashMess
   res.locals.flashMessages = req.flash();
   next();
 });
+
 
 router.get('/', (req, res) => {
   res.render("home");
@@ -76,7 +80,7 @@ router.post('/subscribe', subscriberController.saveSubscriber);
 // int the app.get(), I used two controllers instead of one and used the next() method in the exports object
 router.get('/users', usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
-router.post('/users/create', usersController.create, usersController.redirectView);
+router.post('/users/create', usersController.validate ,usersController.create, usersController.redirectView);
 
 router.get('/users/login', usersController.login);
 router.post('/users/login', usersController.authenticate, usersController.redirectView);
