@@ -1,7 +1,20 @@
 const User = require('../models/user');
+const passport = require('passport');
 
 
 module.exports = {
+  // getUserParams: (body) => { // This comes way later, apparently
+  //   return {
+  //     name: {
+  //       first: body.first,
+  //       last: body.last
+  //     },
+  //     email: body.email,
+  //     password: body.password,
+  //     zipCode: body.zipCode
+  //   };
+  // },
+
   index: (req, res, next) => {
     User.find()
       .then(users => {
@@ -23,32 +36,35 @@ module.exports = {
   },
 
   create: (req, res, next) => {
+    if (req.skip) {
+      next();
+    }
+
     let userParams = {
       name: {
         first: req.body.first,
         last: req.body.last
       },
-
       email: req.body.email,
       password: req.body.password,
       zipCode: req.body.zipCode
+
     };
 
-    User.create(userParams).then((user) => {
-      // Although we are using the request object here to store the flash messages 
-      //temporarily, because we connected these messages to a local variable on the 
-      //response, the messages ultimately make it to the response object
-      req.flash("success", `${user.fullName}'s account created successfully`);
-      // flash messages must be included in your view in order to be displayed properly
-      res.locals.redirect = "/users";
-      res.locals.user = user;
-      next();
-    }).catch(error => {
-      console.log(`Error saving user: ${error}`);
-      res.locals.redirect = "/users/new";
-      req.flash("error", `Failed to create user account because: ${error.message}`);
-      next();
-    });
+    let newUser = new User(userParams);
+    console.log("\n\n" + newUser + "\n\n");
+    User.register(newUser, req.body.password, (error, user) => {
+      if (user) { // If user created successfully
+        req.flash("success", `${user.fullName}'s account created`);
+        res.locals.redirect = "/users";
+        next();
+      } else { // If user doesn't create successfully
+        req.flash("error", `Failed to create user account because: ${error.message}.`);
+        res.locals.redirect = "/users/new";
+        next();
+      }
+    })
+
   },
 
   redirectView: (req, res, next) => {
@@ -126,39 +142,23 @@ module.exports = {
     res.render("users/login");
   },
 
-  authenticate: (req, res, next) => {
-    User.findOne({ email: req.body.email }) // Find a user by email
-      .then(user => { // If email exists
-        if (user) {
-          user.passwordComparison(req.body.password) // Call password comparison on user.js model
-            .then(passwordsMatch => { 
-              if (passwordsMatch) {
-                res.locals.redirect = `/users/${user._id}`;
-                req.flash("success", `${user.fullName} logged in successfully`);
-                res.locals.user = user;
-              } else {
-                req.flash("error", "Failed to log in user account: Incorrect Password");
-                res.locals.redirect = `/users/login`;
-              }
-              next(); // Call next middleware function with redirect and flash message set
-            }); 
-        } else {
-          req.flash("error", "Failed to log in user account: User account not found.");
-          res.locals.redirect = "/users/login";
-          next();
-        }
-      }).catch( error => {
-        console.log("Error logging in user: " + error.message);
-        next(error);
-      })
-  },
+  /**
+   * This method replaces the bcrypt authentication method,
+   * since passport.js handles this for us.
+   */
+  authenticate: passport.authenticate("local", {
+    failureRedirect: "/users/login",
+    failureFlash: "Failed to login.",
+    successRedirect: "/",
+    successFlash: "Logged in!"
+  }),
 
-  validate: (req, res, next) => { 
+  validate: (req, res, next) => {
     req.sanitizeBody("email").normalizeEmail({
       all_lowercase: true
     }).trim();
     req.check("email", "Email is invalid").isEmail();
-    req.check("zipCode", "Zip code is invalid").notEmpty().isInt().isLength({min:5, max:5}).equals(req.body.zipCode);
+    req.check("zipCode", "Zip code is invalid").notEmpty().isInt().isLength({ min: 5, max: 5 }).equals(req.body.zipCode);
     req.check("password", "Password cannot be empty").notEmpty();
     req.getValidationResult().then(error => { // collect results of the sanitize method
       if (!error.isEmpty()) {
