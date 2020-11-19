@@ -63,9 +63,9 @@ router.use((req, res, next) => { // assign flash messages to the local flashMess
   res.locals.flashMessages = req.flash();
   next();
 });
+
 router.use(passport.initialize()); // initializes passport
 router.use(passport.session()); // Configure passport to use sessions. Any other sessions must be defined before this line
-
 /**
  * Make sure the User model is imported.
  * Normally, you'd need to set up some configurations to
@@ -76,9 +76,9 @@ router.use(passport.session()); // Configure passport to use sessions. Any other
  * The bottom two lines direct the process of encrypting and 
  * decrypting user data stored in sessions
  */
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser);
-passport.deserializeUser(User.deserializeUser);
 
 router.get('/', (req, res) => {
   res.render("home");
@@ -101,7 +101,12 @@ router.get('/users/new', usersController.new);
 router.post('/users/create', usersController.validate, usersController.create, usersController.redirectView);
 
 router.get('/users/login', usersController.login);
-router.post('/users/login', usersController.authenticate, usersController.redirectView);
+router.post('/users/login', usersController.authenticate);
+// router.post('/users/login',
+//   passport.authenticate('local', { failureRedirect: '/users/login' }),
+//   function (req, res) {
+//     res.redirect('/');
+//   });
 
 router.get('/users/:id', usersController.show, usersController.showView);
 router.get('/users/:id/edit', usersController.edit);

@@ -146,12 +146,14 @@ module.exports = {
    * This method replaces the bcrypt authentication method,
    * since passport.js handles this for us.
    */
-  authenticate: passport.authenticate("local", {
-    failureRedirect: "/users/login",
-    failureFlash: "Failed to login.",
-    successRedirect: "/",
-    successFlash: "Logged in!"
-  }),
+  authenticate:
+    passport.authenticate("local", {
+      failureRedirect: "/users/login",
+      failureFlash: "Failed to login.",
+      successRedirect: "/",
+      successFlash: "Logged In!"
+    })
+  ,
 
   validate: (req, res, next) => {
     req.sanitizeBody("email").normalizeEmail({
