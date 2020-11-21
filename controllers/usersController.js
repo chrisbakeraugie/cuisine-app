@@ -184,7 +184,7 @@ module.exports = {
     next();
   },
 
-  fuckYou: (req, res) => {
-    res.render('users/fuckYou');
+  loggedOut: (req, res) => {
+    res.render('users/loggedOut');
   }
 }
