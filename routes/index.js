@@ -9,6 +9,6 @@ router.use('/users', userRoutes);
 router.use('/subscribers', subscriberRoutes);
 router.use('/courses', courseRoutes);
 router.use('/', homeRoutes);
-//router.use('/', errorRoutes);
+router.use('/', errorRoutes);
 
 module.exports = router;
