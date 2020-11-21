@@ -180,7 +180,7 @@ module.exports = {
   logout: (req, res, next) => {
     req.logout();
     req.flash("success", "You have been logged out");
-    res.locals.redirect = '/fuck-you';
+    res.locals.redirect = '/users/logged-out';
     next();
   },
 
