@@ -1,20 +1,16 @@
 const express = require('express');
 const app = express();
-const homeController = require('./controllers/homeController');
-const errorController = require('./controllers/errorController');
 const layouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true });
 const db = mongoose.connection;
-const subscriberController = require('./controllers/subscribersController');
-const usersController = require('./controllers/usersController');
-const router = express.Router();
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
 const connectFlash = require('connect-flash');
 const expressValidator = require('express-validator'); // Tool to check that data matches a criteria
 const passport = require("passport");
 const User = require("./models/user");// See passport serialization for information
+const router = require('./routes/index');
 
 
 
@@ -46,11 +42,11 @@ app.use(layouts); // Set the app to use the layout
  */
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use('/', router);
-router.use(expressValidator());
 
-router.use(cookieParser("secret_passcode")); // configure application to use cookie parser as middleware
-router.use(expressSession({
+app.use(expressValidator());
+
+app.use(cookieParser("secret_passcode")); // configure application to use cookie parser as middleware
+app.use(expressSession({
   secret: "secret_passcode",
   cookie: {
     maxAge: 4000000
@@ -59,8 +55,8 @@ router.use(expressSession({
   saveUninitialized: false
 }));
 
-router.use(passport.initialize()); // initializes passport
-router.use(passport.session()); // Configure passport to use sessions. Any other sessions must be defined before this line
+app.use(passport.initialize()); // initializes passport
+app.use(passport.session()); // Configure passport to use sessions. Any other sessions must be defined before this line
 /**
  * Make sure the User model is imported.
  * Normally, you'd need to set up some configurations to
@@ -75,8 +71,8 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 passport.use(User.createStrategy());
 
-router.use(connectFlash()); // configure application to use connect flash as middleware
-router.use((req, res, next) => { // assign flash messages to the local flashMessages variable on the response object
+app.use(connectFlash()); // configure application to use connect flash as middleware
+app.use((req, res, next) => { // assign flash messages to the local flashMessages variable on the response object
   res.locals.flashMessages = req.flash();
   res.locals.loggedIn = req.isAuthenticated();
   res.locals.currentUser = req.user;
@@ -84,45 +80,18 @@ router.use((req, res, next) => { // assign flash messages to the local flashMess
 });
 
 
-router.get('/', (req, res) => {
+app.get('/', (req, res) => {
   res.render("home");
 });
 
-router.use(methodOverride("_method", {
+app.use(methodOverride("_method", {
   methods: ["POST", "GET"]
 }));
 
-router.get('/courses', homeController.showCourses);
-router.get('/contact', homeController.showSignUp);
-router.post('/contact', homeController.postedSignUpForm);
-router.get('/subscribers', subscriberController.getAllSubscribers);
-router.post('/subscribe', subscriberController.saveSubscriber);
-router.get('/logged-out', usersController.loggedOut)
-
-// For /users, I separated the index and indexView. This means the query and the view are separate
-// int the app.get(), I used two controllers instead of one and used the next() method in the exports object
-router.get('/users', usersController.index, usersController.indexView);
-router.get('/users/new', usersController.new);
-router.post('/users/create', usersController.validate, usersController.create, usersController.redirectView);
-
-router.get('/users/login', usersController.login);
-router.post('/users/login', usersController.authenticate);
-router.get('/users/logout', usersController.logout, usersController.loggedOut);
-
-// router.post('/users/login',
-//   passport.authenticate('local', { failureRedirect: '/users/login' }),
-//   function (req, res) {
-//     res.redirect('/');
-//   });
-
-router.get('/users/:id', usersController.show, usersController.showView);
-router.get('/users/:id/edit', usersController.edit);
-router.put('/users/:id/update', usersController.update, usersController.redirectView);
-router.delete('/users/:id/delete', usersController.delete, usersController.redirectView);
-
-// Errors need to be last routes - act as a catch all for your website
-app.use(errorController.pageNotFoundError);
-app.use(errorController.internalServerError);
+/**
+ * Connects main.js to the routes through routes/index.js
+ */
+app.use('/', router);
 
 app.listen(app.get("port"), () => {
   console.log(
