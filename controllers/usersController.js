@@ -175,5 +175,16 @@ module.exports = {
         next(); // Call next middleware
       }
     })
+  },
+
+  logout: (req, res, next) => {
+    req.logout();
+    req.flash("success", "You have been logged out");
+    res.locals.redirect = '/fuck-you';
+    next();
+  },
+
+  fuckYou: (req, res) => {
+    res.render('users/fuckYou');
   }
 }

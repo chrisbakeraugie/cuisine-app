@@ -58,11 +58,6 @@ router.use(expressSession({
   resave: false,
   saveUninitialized: false
 }));
-router.use(connectFlash()); // configure application to use connect flash as middleware
-router.use((req, res, next) => { // assign flash messages to the local flashMessages variable on the response object
-  res.locals.flashMessages = req.flash();
-  next();
-});
 
 router.use(passport.initialize()); // initializes passport
 router.use(passport.session()); // Configure passport to use sessions. Any other sessions must be defined before this line
@@ -80,6 +75,15 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 passport.use(User.createStrategy());
 
+router.use(connectFlash()); // configure application to use connect flash as middleware
+router.use((req, res, next) => { // assign flash messages to the local flashMessages variable on the response object
+  res.locals.flashMessages = req.flash();
+  res.locals.loggedIn = req.isAuthenticated();
+  res.locals.currentUser = req.user;
+  next();
+});
+
+
 router.get('/', (req, res) => {
   res.render("home");
 });
@@ -93,6 +97,7 @@ router.get('/contact', homeController.showSignUp);
 router.post('/contact', homeController.postedSignUpForm);
 router.get('/subscribers', subscriberController.getAllSubscribers);
 router.post('/subscribe', subscriberController.saveSubscriber);
+router.get('/fuck-you', usersController.fuckYou)
 
 // For /users, I separated the index and indexView. This means the query and the view are separate
 // int the app.get(), I used two controllers instead of one and used the next() method in the exports object
@@ -102,6 +107,8 @@ router.post('/users/create', usersController.validate, usersController.create, u
 
 router.get('/users/login', usersController.login);
 router.post('/users/login', usersController.authenticate);
+router.get('/users/logout', usersController.logout, usersController.fuckYou);
+
 // router.post('/users/login',
 //   passport.authenticate('local', { failureRedirect: '/users/login' }),
 //   function (req, res) {
