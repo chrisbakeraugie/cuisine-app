@@ -33,7 +33,7 @@ app.set('port', process.env.PORT || 3000);
 
 app.set('view engine', 'ejs'); // Set app to use ejs
 app.use(layouts); // Set the app to use the layout
-
+app.use(express.static("public"));
 
 /**
  * urlencoded uses body-parser, extended is an option that chooses

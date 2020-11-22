@@ -4,7 +4,7 @@
  * Copyright 2011-2018 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
-:root {
+ :root {
   --blue: #007bff;
   --indigo: #6610f2;
   --purple: #6f42c1;
@@ -71,6 +71,57 @@ body {
 
 [tabindex="-1"]:focus {
   outline: 0 !important;
+}
+
+#modal-button {
+  background-color: #ffe7a2;
+  color: #625956;
+  border: 1px solid;
+}
+
+.modal-dialog {
+  background: white;
+  border-radius: 15px;
+}
+
+.modal-title {
+  padding-top: 30px;
+  padding-top: 30px;
+  font-size: 30px;
+  font-family: "Baloo Bhaina";
+  color: #625956;
+  font-weight: 100;
+}
+
+.course-title {
+  font-family: "Baloo Bhaina";
+  padding: 0 5px;
+  font-size: 20px;
+  border-radius: 10px;
+  margin-top: 10px;
+  display: inline-block;
+  float: left;
+}
+
+.course-description {
+  /* border-bottom: 1px solid #625956; */
+  padding: 10px 10px 20px 10px;
+  text-align: left;
+  margin: 0 10px;
+  clear: left;
+}
+
+.course-title::before {
+  background-image: url("../images/icon.png");
+  background-size: 20px 40px;
+  display: inline-block;
+  width: 20px;
+  height: 40px;
+  content: "";
+}
+
+.modal-body {
+  padding: 15px 30px;
 }
 
 hr {
