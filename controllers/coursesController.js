@@ -1,6 +1,7 @@
 "use strict";
 
 const Course = require("../models/course");
+const httpStatus = require('http-status-codes');
 
 module.exports = {
   index: (req, res, next) => {
@@ -115,5 +116,29 @@ module.exports = {
     let redirectPath = res.locals.redirect;
     if (redirectPath !== undefined) res.redirect(redirectPath);
     else next();
+  },
+
+  respondJSON: (req, res) => {
+    res.json({
+      status: httpStatus.OK,
+      data: res.locals
+    });
+  },
+
+  errorJSON: (error, req, res, next) => {
+    let errorObject;
+
+    if (error) {
+      errorObject = {
+        status: httpStatus.INTERNAL_SERVER_ERROR,
+        message: error.message
+      }
+    } else {
+      errorObject = {
+        status: httpStatus.INTERNAL_SERVER_ERROR,
+        message: "Unknown Error"
+      }
+    } 
+    res.json(errorObject);
   }
 };
