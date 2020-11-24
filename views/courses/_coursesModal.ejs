@@ -88,25 +88,52 @@
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
 
+    let addJoinButtonListener = () => {
+      console.log("Ran button");
+      $(".join-button").click((event) => {
+        let $button = $(event.target)
+        let courseId = $button.data("id");
+        $.get(`/api/courses/${courseId}/join`, (results = {}) => {
+          let data = results.data;
+          if (data && data.success) {
+            $button.text("Joined")
+            .addClass("joined-button")
+            .removeClass("join-button");
+          } else {
+            $button.text('Sorry, try again!');
+          }
+        })
+      })
+    }
+
     // When the user clicks the button, open the modal 
     btn.onclick = function () {
       modal.style.display = "block";
-      $.get("/api/courses", (results = {}) => {
-        let data = results.data;
-        if (!data || !data.courses) {
-          return;
-        }
-        data.courses.forEach((course) => {
-          $(".modal-body").append(
-            `<div>
-              <h4 class="course-title">
+      $(document).ready(() => {
+        $.get("/api/courses", (results = {}) => {
+          let data = results.data;
+          if (!data || !data.courses) {
+            return;
+          }
+          data.courses.forEach((course) => {
+            $(".modal-body").append(
+              `<div class="card">
+              <h4 class="course-title card-header">
                 ${course.title}
                 </h4>
-                <p class="course-description">
+                <div class="card-body">
+                <p class="course-description card-text">
                   ${course.description}
                   </p>
+                  <div class="text-right">
+                  <button class="join-button" data-id="${course._id}">Join</button>
+                    </div>
+                  </div>
               </div>`
-          );
+            );
+          });
+        }).then(() => {
+          addJoinButtonListener()
         });
       });
     }

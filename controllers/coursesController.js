@@ -2,6 +2,7 @@
 
 const Course = require("../models/course");
 const httpStatus = require('http-status-codes');
+const User = require("../models/user");
 
 module.exports = {
   index: (req, res, next) => {
@@ -140,5 +141,25 @@ module.exports = {
       }
     } 
     res.json(errorObject);
+  },
+
+  join: (req, res, next) => { 
+    let courseId = req.params.id; // get the course id and current user from the request
+    let currentUser = req.user;
+
+    if (currentUser) { // Checks if user is logged in
+      User.findByIdAndUpdate(currentUser, { // Update the user's courses field to contain the targeted courses
+        $addToSet: {
+          courses: courseId 
+        }
+      }).then(() => {
+        res.locals.success = true; // Respond with a JSON object with a success indicator
+        next();
+      }).catch(error => {
+        next(error); // Respond with a JSON object with an error indicator
+      });
+    } else {
+      next(new Error("User must log in.")); // Pass an error through to the next middleware function
+    }
   }
 };
