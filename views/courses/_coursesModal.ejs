@@ -91,7 +91,7 @@
     // When the user clicks the button, open the modal 
     btn.onclick = function () {
       modal.style.display = "block";
-      $.get("/api/courses", (results) => {
+      $.get("/api/courses", (results = {}) => {
         let data = results.data;
         if (!data || !data.courses) {
           return;
@@ -109,20 +109,6 @@
           );
         });
       });
-      // $.get("api/courses", (data) => {
-      //   data.forEach((course) => {
-      //     $(".modal-body").append(
-      //       `<div>
-      //         <h4 class="course-title">
-      //           ${course.title}
-      //           </h4>
-      //           <p class="course-description">
-      //             ${course.description}
-      //             </p>
-      //         </div>`
-      //     )
-      //   })
-      // })
     }
 
     // When the user clicks on <span> (x), close the modal
