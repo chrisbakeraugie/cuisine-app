@@ -143,6 +143,9 @@ module.exports = {
     res.json(errorObject);
   },
 
+  /**
+   * Method for adding (joining) a user to a course
+   */
   join: (req, res, next) => { 
     let courseId = req.params.id; // get the course id and current user from the request
     let currentUser = req.user;
@@ -160,6 +163,27 @@ module.exports = {
       });
     } else {
       next(new Error("User must log in.")); // Pass an error through to the next middleware function
+    }
+  },
+
+  /**
+   * This function will check if a user if already logged in. If not, it will next() and show all courses.
+   * If the user is logged in, it will check if the course id matches any in the user's array of courses.
+   * If it finds a match, it will respond 
+   */
+  filterUserCourses: (req, res, next) => {
+    let currentUser = res.locals.currentUser;
+    if (currentUser) {
+      let mappedCourses = res.locals.courses.map(course => { // Maps all courses
+        let userJoined = currentUser.courses.some(userCourse => { // array.some() returns "true" if course._id matches a user's already joined courseId
+          return userCourse.equals(course._id);
+        });
+        return Object.assign(course.toObject(), { joined: userJoined }); // Adds a "joined" key:value to te courses object
+      });
+      res.locals.courses = mappedCourses; // Returns new list of courses, modified to explain if joined: true/false
+      next();
+    } else {
+      next();
     }
   }
 };

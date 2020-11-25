@@ -89,7 +89,6 @@
     var span = document.getElementsByClassName("close")[0];
 
     let addJoinButtonListener = () => {
-      console.log("Ran button");
       $(".join-button").click((event) => {
         let $button = $(event.target)
         let courseId = $button.data("id");
@@ -112,6 +111,8 @@
       $(document).ready(() => {
         $.get("/api/courses", (results = {}) => {
           let data = results.data;
+          console.log("Here");
+          console.log(data);
           if (!data || !data.courses) {
             return;
           }
@@ -126,7 +127,7 @@
                   ${course.description}
                   </p>
                   <div class="text-right">
-                  <button class="join-button" data-id="${course._id}">Join</button>
+                    <button class='${course.joined ? "joined-button" : "join-button"}' data-id="${course._id}">${course.joined ? "Joined" : "Join"}
                     </div>
                   </div>
               </div>`
