@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Subscriber = require('./subscriber');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt'); Removed for passport-local-mongoose login strategy
 const passportLocalMongoose = require('passport-local-mongoose');
+const randToken = require('rand-token');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -40,7 +41,9 @@ const userSchema = new mongoose.Schema({
 
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
 
-  subscribedAccount: { type: mongoose.Schema.Types.ObjectId, ref: "Subscriber" }
+  subscribedAccount: { type: mongoose.Schema.Types.ObjectId, ref: "Subscriber" },
+
+  apiToken: {type:String}
 },
   { timestamps: true } // Timestamp property to record createdAt and updatedAt dates
 );
@@ -75,6 +78,17 @@ userSchema.pre("save", function (next) {
   } else {
     next(); 
   }
+});
+
+/**
+ * This method checks for a user token to be used with api security.
+ */
+userSchema.pre("save", function (next) {
+  let user = this;
+  if (!user.apiToken) { // Checks for an existing API token and generates a new one with randToken.generate
+    user.apiToken = randToken.generate(16); 
+  }
+  next();
 });
 
 

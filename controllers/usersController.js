@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const passport = require('passport');
+const token = process.env.TOKEN || "recipeT0k3n"; // Temporary for token testing
 
 
 module.exports = {
@@ -186,5 +187,28 @@ module.exports = {
 
   loggedOut: (req, res) => {
     res.render('users/loggedOut');
+  },
+
+  verifyToken: (req, res, next) => {
+    // First attempt at using tokens.
+    // if (req.query.apiToken === token) {
+    //   next();
+    // } else {
+    //   next(new Error("Invalid API token."));
+    // }
+    let token = req.query.apiToken;
+    if (token) {
+      User.findOne({apiToken: token}).then(user => { // Search for user with API token
+        if (user) {
+          next(); // WARNING - this will allow access if ANY user has the token submitted
+        } else {
+          next(new Error('Invalid API token'));
+        }
+      }).catch(error => {
+        next(new Error(error.message));
+      });
+    } else {
+      next(new Error('Invalid API token'));
+    }
   }
 }

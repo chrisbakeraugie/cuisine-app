@@ -111,8 +111,6 @@
       $(document).ready(() => {
         $.get("/api/courses", (results = {}) => {
           let data = results.data;
-          console.log("Here");
-          console.log(data);
           if (!data || !data.courses) {
             return;
           }

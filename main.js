@@ -30,7 +30,7 @@ db.once("open", () => {
 
 
 app.set('port', process.env.PORT || 3000);
-
+app.set("token", process.env.TOKEN || "recipeT0k3n");
 app.set('view engine', 'ejs'); // Set app to use ejs
 app.use(layouts); // Set the app to use the layout
 app.use(express.static("public"));
@@ -87,6 +87,8 @@ app.get('/', (req, res) => {
 app.use(methodOverride("_method", {
   methods: ["POST", "GET"]
 }));
+
+
 
 /**
  * Connects main.js to the routes through routes/index.js
