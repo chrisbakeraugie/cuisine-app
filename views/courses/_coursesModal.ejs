@@ -62,7 +62,7 @@
 
 
   <!-- Trigger/Open The Modal -->
-  <button id="myBtn">Latest Classes</button>
+  <button class="btn btn-info" id="myBtn">Latest Classes</button>
 
   <!-- The Modal -->
   <div id="myModal" class="modal">
@@ -127,7 +127,7 @@
                   ${course.description}
                   </p>
                   <div class="text-right">
-                    <button class='${course.joined ? "joined-button" : "join-button"}' data-id="${course._id}">${course.joined ? "Joined" : "Join"}
+                    <button class='btn btn-info ${course.joined ? "joined-button" : "join-button"}' data-id="${course._id}">${course.joined ? "Joined" : "Join"}
                     </div>
                   </div>
               </div>`
