@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const passport = require('passport');
 const token = process.env.TOKEN || "recipeT0k3n"; // Temporary for token testing
+const jsonWebToken = require('jsonwebtoken');
+const httpStatus = require('http-status-codes');
 
 
 module.exports = {
@@ -198,7 +200,7 @@ module.exports = {
     // }
     let token = req.query.apiToken;
     if (token) {
-      User.findOne({apiToken: token}).then(user => { // Search for user with API token
+      User.findOne({ apiToken: token }).then(user => { // Search for user with API token
         if (user) {
           next(); // WARNING - this will allow access if ANY user has the token submitted
         } else {
@@ -209,6 +211,65 @@ module.exports = {
       });
     } else {
       next(new Error('Invalid API token'));
+    }
+  },
+
+  apiAuthenticate: (req, res, next) => {
+    console.log("Ran authentication");
+    passport.authenticate("local", (errors, user) => { // use the passport authenticate method
+      if (user) {
+        let signedToken = jsonWebToken.sign( // SIgn the JSON web token if a user exists with these credentials
+          {
+            data: user._id,
+            exp: new Date().setDate(new Date().getDate() + 1)
+          },
+          "secret_encoding_passphrase"
+        );
+        res.json({
+          success: true,
+          token: signedToken // Responding with JSON web token
+        });
+      } else {
+        res.json({
+          success: false,
+          message: "Could not authenticate user"
+        });
+      }
+    })(req, res, next); // Currying? Probably best to check this at some point...
+  },
+
+  verifyJWT: (req, res, next) => {
+    let token = req.headers.token;
+    if (token) {
+      jsonWebToken.verify(
+        token,
+        "secret_encoding_passphrase",
+        (errors, payload) => {
+          if (payload) {
+            User.findById(payload.data).then(user => {
+              if (user) {
+                next();
+              } else {
+                res.status(httpStatus.FORBIDDEN).json({
+                  error: true,
+                  message: "No User account found"
+                });
+              }
+            });
+          } else {
+            res.status(httpStatus.UNAUTHORIZED).json({
+              error: true,
+              message: "Cannot verify API token."
+            });
+            next();
+          }
+        }
+      );
+    } else {
+      res.status(httpStatus.UNAUTHORIZED).json({
+        error: true,
+        message: "Provide Token"
+      })
     }
   }
 }
