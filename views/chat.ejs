@@ -17,11 +17,24 @@ let displayMessage = (message) => {
 };
 </script> -->
 
-<div class="container">
+<!-- <div class="container">
   <h1>Chat</h1>
   <form id="chatForm">
     <input id="chat-input" type="text">
     <input type="submit" value="Send">
   </form>
   <div id="chat" style="height: 500px; width: 500px; border-style: dotted;"></div>
-</div>
+</div> -->
+
+<div class="container">
+    <% if (currentUser) { %>
+    <h1>Chat</h1>
+    <form id="chatForm" type="text">
+      <input id="chat-input" type="text">
+      <input id="chat-username" type="hidden" value="<%= currentUser.fullName%>">
+      <input id="chat-user-id" type="hidden" value="<%= currentUser._id%>">
+      <input type="submit" value="Send">
+    </form>
+    <div id="chat" style="min-height: 500px; min-width: 500px; border-style: dotted;"></div>
+    <% } %>
+  </div>

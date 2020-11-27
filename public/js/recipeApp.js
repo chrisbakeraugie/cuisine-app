@@ -2,36 +2,44 @@ $(document).ready(() => {
   const socket = io();
 
   $("#chatForm").submit(() => {
-    let text = $("#chat-input").val(); // Grab text vaule from input field
+    let text = $("#chat-input").val(); // Grab text value from input field
+    let userId = $("#chat-user-id").val();
+    let userName = $("#chat-username").val();
 
     socket.emit("message", {
-      content: text
+      content: text,
+      userName: userName,
+      userId: userId
     });
     $("#chat-input").val("");
     return false;
   });
 
   socket.on("message", (message) => {
-    displayMessage(message.content);
+    displayMessage(message);
   });
 
   let displayMessage = (message) => {
-    $("#chat").prepend($("<li>").html(message));
+    $("#chat").prepend($("<li style='list-style:none;'>").html(`
+    <strong class="message ${getCurrentUserClass(message.user)}">
+    ${message.userName}
+    </strong>: ${message.content}`));
   };
+
+  let getCurrentUserClass = (id) => {
+    let userId = $("#chat-user-id").val();
+    return (
+      userId === id ? "current-user" : "" // Check whether messages user id matches the form's user id
+    );
+  }
 
 
   // Get the modal
   var modal = document.getElementById("myModal");
-
-
   // Get the button that opens the modal
   var btn = document.getElementById("myBtn");
-
-  // Get the <span> element that closes the modal
+   // Get the <span> element that closes the modal
   var span = document.getElementsByClassName("close")[0];
-
-
-
   // When the user clicks the button, open the modal 
   btn.onclick = function () {
     modal.style.display = "block";

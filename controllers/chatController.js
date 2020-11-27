@@ -7,9 +7,12 @@ module.exports = io => { // export chat controller contents
     });
 
     client.on("message", (data) => { // list for a custom message event
-      io.emit("message", { // broadcast message
-        content: data.content
-      });
+      let messageAttributes = {
+        content: data.content,
+        userName: data.userName,
+        user: data.userId
+      }
+      io.emit("message", messageAttributes); // broadcast message
     });
   });
 }
