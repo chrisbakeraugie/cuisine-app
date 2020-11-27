@@ -230,7 +230,7 @@ module.exports = {
         });
       } else {
         res.json({
-          success: false,=
+          success: false,
           message: "Could not authenticate user"
         });
       }

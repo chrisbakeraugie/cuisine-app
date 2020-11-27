@@ -7,5 +7,9 @@ module.exports = {
 
   postedSignUpForm: (req,res) => {
     res.render('thanks');
+  },
+
+  chat: (req, res) => {
+    res.render("chat");
   }
 }
