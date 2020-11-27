@@ -6,9 +6,9 @@ module.exports = io => { // export chat controller contents
       console.log("user disconnected");
     });
 
-    client.on("message", () => { // list for a custom message event
+    client.on("message", (data) => { // list for a custom message event
       io.emit("message", { // broadcast message
-        content: "Hello"
+        content: data.content
       });
     });
   });

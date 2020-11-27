@@ -2,7 +2,11 @@ $(document).ready(() => {
   const socket = io();
 
   $("#chatForm").submit(() => {
-    socket.emit("message");
+    let text = $("#chat-input").val(); // Grab text vaule from input field
+
+    socket.emit("message", {
+      content: text
+    });
     $("#chat-input").val("");
     return false;
   });
