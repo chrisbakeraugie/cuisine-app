@@ -1,6 +1,15 @@
+const Message = require('../models/message');
+
 module.exports = io => { // export chat controller contents
   io.on("connection", client => { // listen for new connections
     console.log('new connection');
+
+    Message.find({})
+    .sort({createdAt: -1}) // Sort in descending order
+    .limit(10)
+    .then(messages => {
+      client.emit("load all messages", messages.reverse());
+    })
 
     client.on("disconnect", () => { // listen for user disconnects
       console.log("user disconnected");
@@ -12,7 +21,11 @@ module.exports = io => { // export chat controller contents
         userName: data.userName,
         user: data.userId
       }
-      io.emit("message", messageAttributes); // broadcast message
+      let m = new Message(messageAttributes);
+      m.save().then(() => {
+        io.emit("message", messageAttributes); // broadcast message
+      }).catch(error => console.log(error));
+
     });
   });
 }
