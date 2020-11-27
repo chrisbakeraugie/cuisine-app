@@ -215,7 +215,6 @@ module.exports = {
   },
 
   apiAuthenticate: (req, res, next) => {
-    console.log("Ran authentication");
     passport.authenticate("local", (errors, user) => { // use the passport authenticate method
       if (user) {
         let signedToken = jsonWebToken.sign( // SIgn the JSON web token if a user exists with these credentials
@@ -231,7 +230,7 @@ module.exports = {
         });
       } else {
         res.json({
-          success: false,
+          success: false,=
           message: "Could not authenticate user"
         });
       }
@@ -239,7 +238,8 @@ module.exports = {
   },
 
   verifyJWT: (req, res, next) => {
-    let token = req.headers.token;
+    let token = req.headers.token; // JWT passed through headers, since not all requests will be POST requests.
+                                   // you could pass through the body, if necessary... 
     if (token) {
       jsonWebToken.verify(
         token,
