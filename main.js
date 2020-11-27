@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const layouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true , useCreateIndex: true});
 const db = mongoose.connection;
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -95,8 +95,13 @@ app.use(methodOverride("_method", {
  */
 app.use('/', router);
 
-app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), () => {
   console.log(
     `Server running at http:// localhost:${app.get("port")}`
   );
-});
+}),
+io = require("socket.io")(server);
+/**
+ * Below: Passing the io object to chatController to manage the socket connections from there
+ */
+require('./controllers/chatController')(io);
