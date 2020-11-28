@@ -17,6 +17,10 @@ $(document).ready(() => {
 
   socket.on("message", (message) => {
     displayMessage(message);
+    for (let i=0; i< 2; i++) {
+      console.log("\n\nRan flash\n\n")
+      $(".chat-icon").fadeOut(200).fadeIn(200);
+    }
   });
 
   socket.on("load all messages", (data) => {
@@ -24,6 +28,14 @@ $(document).ready(() => {
       displayMessage(message);
     });
   });
+
+  // Listen for "user disconnected" event and display a custom message
+  socket.on("user disconnected", () => {
+    displayMessage({
+      userName: "Notice",
+      content: "User left the chat"
+    })
+  })
 
   let displayMessage = (message) => {
     $("#chat").prepend($("<li style='list-style:none;'>").html(`

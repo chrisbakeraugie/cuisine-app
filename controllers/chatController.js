@@ -6,12 +6,15 @@ module.exports = io => { // export chat controller contents
 
     Message.find({})
     .sort({createdAt: -1}) // Sort in descending order
-    .limit(10)
+    .limit(100)
     .then(messages => {
       client.emit("load all messages", messages.reverse());
     })
 
     client.on("disconnect", () => { // listen for user disconnects
+      client.broadcast.emit("user disconnected"); // Broadcast to ALL other connected sockets
+      // We are broadcasting (instead of emitting) because the client that's emitting the message is 
+      // disconnected and can no longer handle that custom event
       console.log("user disconnected");
     });
 
