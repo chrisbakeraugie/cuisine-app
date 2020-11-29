@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const layouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/recipe_db', { useNewUrlParser: true , useCreateIndex: true});
+
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_db', { useNewUrlParser: true });
+
 const db = mongoose.connection;
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
