@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_db', { useNewUrlParser: true });
 
+
 const db = mongoose.connection;
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
