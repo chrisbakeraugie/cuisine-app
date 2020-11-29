@@ -15,8 +15,6 @@ const User = require("./models/user");// See passport serialization for informat
 const router = require('./routes/index');
 
 
-
-
 /**
  * method-override package because HTML forms only support
  * GET and POST requests. This package will let Express interpret
