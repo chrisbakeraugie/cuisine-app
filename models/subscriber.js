@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 // Define the Subscriber schema
 const subscriberSchema = new mongoose.Schema({
@@ -14,23 +14,19 @@ const subscriberSchema = new mongoose.Schema({
   },
   zipCode: {
     type: Number,
-    min: [00501, "Zip code too short"],
-    max: [99999, "Zip code too long"]
+    min: [501, 'Zip code too short'],
+    max: [99999, 'Zip code too long']
   },
 
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }] // Referencing the course.js model. The [] are just to represent it will be an array
-}, {timestamps: true});
-
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }] // Referencing the course.js model. The [] are just to represent it will be an array
+}, { timestamps: true })
 
 subscriberSchema.methods.getInfo = function () {
-  return (`Name: ${this.name} Email: ${this.email} Zip Code: ${this.zipCode}`);
-};
+  return (`Name: ${this.name} Email: ${this.email} Zip Code: ${this.zipCode}`)
+}
 
 subscriberSchema.methods.findLocalSubscribers = function () {
-  return this.model("Subscriber").find({ zipCode: this.zipCode }).exec();
-};
+  return this.model('Subscriber').find({ zipCode: this.zipCode }).exec()
+}
 
-// The model that can be used to create new Subscribers
-const Subscriber = mongoose.model('Subscriber', subscriberSchema);
-
-module.exports = mongoose.model('Subscriber', subscriberSchema);
+module.exports = mongoose.model('Subscriber', subscriberSchema)

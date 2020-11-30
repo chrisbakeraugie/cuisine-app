@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const Subscriber = require('./subscriber');
+const mongoose = require('mongoose')
+const Subscriber = require('./subscriber')
 // const bcrypt = require('bcrypt'); Removed for passport-local-mongoose login strategy
-const passportLocalMongoose = require('passport-local-mongoose');
-const randToken = require('rand-token');
+const passportLocalMongoose = require('passport-local-mongoose')
+const randToken = require('rand-token')
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
 
   zipCode: {
     type: Number,
-    min: 00500,
+    min: 500,
     max: 99950
   },
 
@@ -39,74 +39,73 @@ const userSchema = new mongoose.Schema({
   //   required: true
   // },
 
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
 
-  subscribedAccount: { type: mongoose.Schema.Types.ObjectId, ref: "Subscriber" },
+  subscribedAccount: { type: mongoose.Schema.Types.ObjectId, ref: 'Subscriber' },
 
-  apiToken: {type:String}
+  apiToken: { type: String }
 },
-  { timestamps: true } // Timestamp property to record createdAt and updatedAt dates
-);
+{ timestamps: true } // Timestamp property to record createdAt and updatedAt dates
+)
 
-userSchema.virtual("fullName").get(function () {
+userSchema.virtual('fullName').get(function () {
   return (`${this.name.first} ${this.name.last}`)
-});
+})
 
-userSchema.virtual("middleName").get(function() {
-  if (this.name.middle){
-    return("Yes");
+userSchema.virtual('middleName').get(function () {
+  if (this.name.middle) {
+    return ('Yes')
   } else {
-    return("No");
+    return ('No')
   }
-});
+})
 
 /**
  * This "pre save hook" checks to see if the user already has an associated subscriber,
  * and stops the save operation if it does.
  */
-userSchema.pre("save", function (next) {
-  let user = this;
+userSchema.pre('save', function (next) {
+  const user = this
   if (user.subscribedAccount === undefined) {
     Subscriber.findOne({
       email: user.email
     }).then(subscriber => {
-      user.subscribedAccount = subscriber;
-      next();
+      user.subscribedAccount = subscriber
+      next()
     }).catch(error => {
-      console.log(`Error in connecting subscriber: ${error}`);
-    });
+      console.log(`Error in connecting subscriber: ${error}`)
+    })
   } else {
-    next(); 
+    next()
   }
-});
+})
 
 /**
  * This method checks for a user token to be used with api security.
  */
-userSchema.pre("save", function (next) {
-  let user = this;
+userSchema.pre('save', function (next) {
+  const user = this
   if (!user.apiToken) { // Checks for an existing API token and generates a new one with randToken.generate
-    user.apiToken = randToken.generate(16); 
+    user.apiToken = randToken.generate(16)
   }
-  next();
-});
-
+  next()
+})
 
 /**
- * Applying the passport-local-mongoose module as 
+ * Applying the passport-local-mongoose module as
  * a plugin to the user schema
- * 
+ *
  * NOTE
- * 
+ *
  * When this is functioning, Passport.js automatically takes care of
  * password storage, so you can remove the password property.
  * It modifies your schema behind the scenes to add ash and salt fields to your User model
- * 
+ *
  */
 userSchema.plugin(passportLocalMongoose, {
-  usernameField: "email"
-});
+  usernameField: 'email'
+})
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema)
 
-module.exports = User;
+module.exports = User
