@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { Schema } = require('mongoose')
+const mongoose = require('mongoose');
+const { Schema } = require('mongoose');
 
 const messageSchema = new Schema({
   content: {
@@ -17,6 +17,6 @@ const messageSchema = new Schema({
     ref: 'User',
     required: true
   }
-}, { timestamps: true })
+}, { timestamps: true });
 
-module.exports = mongoose.model('Message', messageSchema)
+module.exports = mongoose.model('Message', messageSchema);

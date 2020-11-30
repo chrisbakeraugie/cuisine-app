@@ -2,14 +2,14 @@
 module.exports = {
 
   showSignUp: (req, res) => {
-    res.render('contact')
+    res.render('contact');
   },
 
   postedSignUpForm: (req, res) => {
-    res.render('thanks')
+    res.render('thanks');
   },
 
   chat: (req, res) => {
-    res.render('chat')
+    res.render('chat');
   }
-}
+};

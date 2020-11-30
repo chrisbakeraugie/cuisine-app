@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
   title: {
@@ -24,6 +24,6 @@ const courseSchema = new mongoose.Schema({
     min: [0, 'Negative means you\'d be paying your students. Don\'t do that']
   }
 }, { timestamps: true }
-)
+);
 
-module.exports = mongoose.model('Course', courseSchema)
+module.exports = mongoose.model('Course', courseSchema);

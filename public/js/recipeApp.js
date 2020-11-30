@@ -1,71 +1,71 @@
 /* eslint-disable no-undef */
 $(document).ready(() => {
-  const socket = io()
+  const socket = io();
 
   $('#chatForm').submit(() => {
-    const text = $('#chat-input').val() // Grab text value from input field
-    const userId = $('#chat-user-id').val()
-    const userName = $('#chat-username').val()
+    const text = $('#chat-input').val(); // Grab text value from input field
+    const userId = $('#chat-user-id').val();
+    const userName = $('#chat-username').val();
 
     socket.emit('message', {
       content: text,
       userName: userName,
       userId: userId
-    })
-    $('#chat-input').val('')
-    return false
-  })
+    });
+    $('#chat-input').val('');
+    return false;
+  });
 
   socket.on('message', (message) => {
-    displayMessage(message)
+    displayMessage(message);
     for (let i = 0; i < 2; i++) {
-      console.log('\n\nRan flash\n\n')
-      $('.chat-icon').fadeOut(200).fadeIn(200)
+      console.log('\n\nRan flash\n\n');
+      $('.chat-icon').fadeOut(200).fadeIn(200);
     }
-  })
+  });
 
   socket.on('load all messages', (data) => {
     data.forEach(message => {
-      displayMessage(message)
-    })
-  })
+      displayMessage(message);
+    });
+  });
 
   // Listen for "user disconnected" event and display a custom message
   socket.on('user disconnected', () => {
     displayMessage({
       userName: 'Notice',
       content: 'User left the chat'
-    })
-  })
+    });
+  });
 
   const displayMessage = (message) => {
     $('#chat').prepend($("<li style='list-style:none;'>").html(`
     <strong class="message ${getCurrentUserClass(message.user)}">
     ${message.userName}
-    </strong>: ${message.content}`))
-  }
+    </strong>: ${message.content}`));
+  };
 
   const getCurrentUserClass = (id) => {
-    const userId = $('#chat-user-id').val()
+    const userId = $('#chat-user-id').val();
     return (
       userId === id ? 'current-user' : '' // Check whether messages user id matches the form's user id
-    )
-  }
+    );
+  };
 
   // Get the modal
-  const modal = document.getElementById('myModal')
+  const modal = document.getElementById('myModal');
   // Get the button that opens the modal
-  const btn = document.getElementById('myBtn')
+  const btn = document.getElementById('myBtn');
   // Get the <span> element that closes the modal
-  const span = document.getElementsByClassName('close')[0]
+  const span = document.getElementsByClassName('close')[0];
   // When the user clicks the button, open the modal
   btn.onclick = function () {
-    modal.style.display = 'block'
+    modal.style.display = 'block';
     $(document).ready(() => {
       $.get('/api/courses?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNWZiZWM1NWIzZmMwNjkwODdjYmQzNzM4IiwiZXhwIjoxNjA2NTgxNzEwMjE5LCJpYXQiOjE2MDY0OTUzMTB9.vkZGSF1Xu2JVO--0bd8gfsN2MoSAhVJen9OV0Bu1qHI', (results = {}) => {
-        const data = results.data
+        const data = results.data;
         if (!data || !data.courses) {
-          return
+          return;
         }
         data.courses.forEach((course) => {
           $('.modal-body').append(
@@ -82,47 +82,47 @@ $(document).ready(() => {
                     </div>
                   </div>
               </div>`
-          )
-        })
+          );
+        });
       }).then(() => {
-        addJoinButtonListener()
-      })
-    })
-  }
+        addJoinButtonListener();
+      });
+    });
+  };
 
   // When the user clicks on <span> (x), close the modal
   span.onclick = function () {
-    modal.style.display = 'none'
-  }
+    modal.style.display = 'none';
+  };
 
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = function (event) {
     // eslint-disable-next-line eqeqeq
     if (event.target == modal) {
-      modal.style.display = 'none'
+      modal.style.display = 'none';
       $.get('/courses?format=json', (data) => {
         data.forEach((course) => {
-          $('.modal-body').empty()
-        })
-      })
+          $('.modal-body').empty();
+        });
+      });
     }
-  }
+  };
 }
-)
+);
 
 const addJoinButtonListener = () => {
   $('.join-button').click((event) => {
-    const $button = $(event.target)
-    const courseId = $button.data('id')
+    const $button = $(event.target);
+    const courseId = $button.data('id');
     $.get(`/api/courses/${courseId}/join`, (results = {}) => {
-      const data = results.data
+      const data = results.data;
       if (data && data.success) {
         $button.text('Joined')
           .addClass('joined-button')
-          .removeClass('join-button')
+          .removeClass('join-button');
       } else {
-        $button.text('Sorry, try again!')
+        $button.text('Sorry, try again!');
       }
-    })
-  })
-}
+    });
+  });
+};

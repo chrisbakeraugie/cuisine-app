@@ -40,4 +40,4 @@ Course.remove({})
   .then(() => {
     console.log('DONE')
     mongoose.connection.close()
-  })
+  });
